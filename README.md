@@ -1,0 +1,1 @@
+Just a project using node, react, socket.io and mongoDB made for study.
