@@ -20,6 +20,40 @@ class Feed extends Component {
             <img src={more} alt="Mais" />
           </header>
           <img src="http://localhost:3333/files/wall.jpg" alt="" />
+          <footer>
+            <div className="actions">
+              <img src={like} alt="" />
+              <img src={comment} alt="" />
+              <img src={send} alt="" />
+            </div>
+            <strong>900 curtidas</strong>
+            <p>
+              Post muito foda
+              <span>#react #top</span>
+            </p>
+          </footer>
+        </article>
+        <article>
+          <header>
+            <div className="user-info">
+              <span>Jorge Mendes</span>
+              <span className="place">São Paulo</span>
+            </div>
+            <img src={more} alt="Mais" />
+          </header>
+          <img src="http://localhost:3333/files/wall.jpg" alt="" />
+          <footer>
+            <div className="actions">
+              <img src={like} alt="" />
+              <img src={comment} alt="" />
+              <img src={send} alt="" />
+            </div>
+            <strong>900 curtidas</strong>
+            <p>
+              Post muito foda
+              <span>#react #top</span>
+            </p>
+          </footer>
         </article>
       </section>
     );
