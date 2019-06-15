@@ -1,60 +1,75 @@
 import React, { Component } from 'react';
-
-import './Feed.css';
+import api from '../services/api';
+import io from 'socket.io-client';
 
 import more from '../assets/more.svg';
 import like from '../assets/like.svg';
 import comment from '../assets/comment.svg';
 import send from '../assets/send.svg';
 
+import './feed.css';
+
 class Feed extends Component {
+  state = {
+    feed: [],
+  };
+
+  async componentDidMount() {
+    this.registerToSocket();
+
+    const res = await api.get('posts');
+      this.setState({ feed: res.data });
+  }
+
+  registerToSocket = () => {
+    const socket = io('http://localhost:3333');
+
+    socket.on('post', newPost => {
+      this.setState({ feed: [newPost, ...this.state.feed] });
+    });
+
+    socket.on('like', likedPost => {
+      this.setState({
+        feed: this.state.feed.map(post =>
+          post._id === likedPost._id ? likedPost : post)
+      });
+    });
+
+  }
+
+  handleLike = id => {
+    api.post(`/posts/${id}/like`);
+  }
+
   render() {
     return (
-      <section className="post-list">
-        <article>
+      <section id="post-list">
+        { this.state.feed.map( post => (
+          <article key={post._id}>
           <header>
             <div className="user-info">
-              <span>Jorge Mendes</span>
-              <span className="place">São Paulo</span>
+              <span>{post.author}</span>
+              <span className="place">{post.place}</span>
             </div>
             <img src={more} alt="Mais" />
           </header>
-          <img src="http://localhost:3333/files/wall.jpg" alt="" />
+          <img src={`http://localhost:3333/files/${post.image}`} alt={post.description} />
           <footer>
             <div className="actions">
-              <img src={like} alt="" />
+              <button type="button" onClick={ () => this.handleLike(post._id)}>
+                <img src={like} alt="" />
+              </button>
               <img src={comment} alt="" />
               <img src={send} alt="" />
             </div>
-            <strong>900 curtidas</strong>
+            <strong>{post.likes} curtidas</strong>
             <p>
-              Post muito foda
-              <span>#react #top</span>
+              {post.description}
+              <span>{post.hashtags}</span>
             </p>
           </footer>
         </article>
-        <article>
-          <header>
-            <div className="user-info">
-              <span>Jorge Mendes</span>
-              <span className="place">São Paulo</span>
-            </div>
-            <img src={more} alt="Mais" />
-          </header>
-          <img src="http://localhost:3333/files/wall.jpg" alt="" />
-          <footer>
-            <div className="actions">
-              <img src={like} alt="" />
-              <img src={comment} alt="" />
-              <img src={send} alt="" />
-            </div>
-            <strong>900 curtidas</strong>
-            <p>
-              Post muito foda
-              <span>#react #top</span>
-            </p>
-          </footer>
-        </article>
+        ))}
       </section>
     );
   }
