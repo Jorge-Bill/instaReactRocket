@@ -7,7 +7,7 @@ import like from '../assets/like.svg';
 import comment from '../assets/comment.svg';
 import send from '../assets/send.svg';
 
-import './feed.css';
+import './Feed.css';
 
 class Feed extends Component {
   state = {
@@ -18,7 +18,7 @@ class Feed extends Component {
     this.registerToSocket();
 
     const res = await api.get('posts');
-      this.setState({ feed: res.data });
+    this.setState({ feed: res.data });
   }
 
   registerToSocket = () => {
@@ -28,47 +28,50 @@ class Feed extends Component {
       this.setState({ feed: [newPost, ...this.state.feed] });
     });
 
-    socket.on('like', likedPost => {
+    socket.on('like', like => {
       this.setState({
         feed: this.state.feed.map(post =>
-          post._id === likedPost._id ? likedPost : post)
+          post._id === like._id ? like : post,
+        ),
       });
     });
-
-  }
+  };
 
   handleLike = id => {
     api.post(`/posts/${id}/like`);
-  }
+  };
 
   render() {
     return (
       <section id="post-list">
-        { this.state.feed.map( post => (
+        {this.state.feed.map(post => (
           <article key={post._id}>
-          <header>
-            <div className="user-info">
-              <span>{post.author}</span>
-              <span className="place">{post.place}</span>
-            </div>
-            <img src={more} alt="Mais" />
-          </header>
-          <img src={`http://localhost:3333/files/${post.image}`} alt={post.description} />
-          <footer>
-            <div className="actions">
-              <button type="button" onClick={ () => this.handleLike(post._id)}>
-                <img src={like} alt="" />
-              </button>
-              <img src={comment} alt="" />
-              <img src={send} alt="" />
-            </div>
-            <strong>{post.likes} curtidas</strong>
-            <p>
-              {post.description}
-              <span>{post.hashtags}</span>
-            </p>
-          </footer>
-        </article>
+            <header>
+              <div className="user-info">
+                <span>{post.author}</span>
+                <span className="place">{post.place}</span>
+              </div>
+              <img src={more} alt="Mais" />
+            </header>
+            <img
+              src={`http://localhost:3333/files/${post.image}`}
+              alt={post.description}
+            />
+            <footer>
+              <div className="actions">
+                <button type="button" onClick={() => this.handleLike(post._id)}>
+                  <img src={like} alt="" />
+                </button>
+                <img src={comment} alt="" />
+                <img src={send} alt="" />
+              </div>
+              <strong>{post.likes} curtidas</strong>
+              <p>
+                {post.description}
+                <span>{post.hashtags}</span>
+              </p>
+            </footer>
+          </article>
         ))}
       </section>
     );
